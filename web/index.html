@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriRL: Adaptive Pest Management Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="logo-icon">🌿</div>
+        <div>
+          <h1>AgriRL Simulator</h1>
+          <p class="subtitle">Adaptive Pest Management via Vision-Inspired Reinforcement Learning</p>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); font-weight: 700;">⚡ Parallel Dual-Branch Architecture</span>
+        <span class="badge badge-success">Model: Multimodal PPO</span>
+        <span class="badge badge-info" id="status-badge">Streams Synced</span>
+      </div>
+    </header>
+
+    <!-- Main Grid Layout -->
+    <main class="dashboard-grid">
+      <!-- Left Column: Controls & Field Canvas -->
+      <section class="card left-panel">
+        <div class="card-header">
+          <h2>🌾 Simulated Field Micro-Ecosystem</h2>
+          <span class="day-indicator" id="day-counter">Day 01 / 25</span>
+        </div>
+
+        <!-- Visual Crop Field Grid -->
+        <div class="field-container">
+          <div id="crop-field" class="crop-grid"></div>
+          <div id="spray-overlay" class="spray-effect"></div>
+        </div>
+
+        <!-- Multimodal Vision: Leaf Image Upload & Live CNN Classification -->
+        <div class="controls-section vision-upload-card" style="background: rgba(16, 185, 129, 0.08); border: 1.5px dashed #10b981; border-radius: 10px; padding: 14px; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <label class="control-label" style="margin: 0; font-weight: 700; color: #34d399; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+              <span>📷</span> <span>Branch A: Visual Pest Perception (CNN)</span>
+            </label>
+            <span id="cnn-status-pill" class="badge" style="background: #10b981; color: #ffffff; font-weight: 700; font-size: 11px; padding: 3px 8px; border-radius: 12px;">CNN Active</span>
+          </div>
+          
+          <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 10px;">
+            <input type="file" id="leaf-upload-input" accept="image/*" style="font-size: 12px; flex: 1; color: #94a3b8; background: rgba(255,255,255,0.05); padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">
+            <div id="leaf-preview-container" style="width: 52px; height: 52px; border-radius: 8px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1.5px solid #10b981; flex-shrink: 0;">
+              <span style="font-size: 24px;">🍃</span>
+            </div>
+          </div>
+
+          <!-- Highlighted CNN Inference Output Card -->
+          <div id="cnn-result-card" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 12px; color: #cbd5e1;">Pest Detected by CNN:</span>
+              <strong id="detected-pest-name" style="font-size: 13.5px; color: #fbbf24; font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">APHID</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 12px; color: #cbd5e1;">Model Confidence:</span>
+              <strong id="detected-pest-conf" style="font-size: 13px; color: #34d399; font-family: 'JetBrains Mono', monospace;">94.2%</strong>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px; margin-top: 4px; display: flex; align-items: center; justify-content: space-between;">
+              <span>RL State Vector Injection:</span>
+              <span style="color: #38bdf8; font-family: 'JetBrains Mono', monospace;">Dims [9..15]</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scenario Controls -->
+        <div class="controls-section">
+          <label class="control-label">Preset Agricultural Scenario:</label>
+          <div class="preset-buttons">
+            <button class="btn btn-outline" data-scenario="1">Very Low Pest (8%)</button>
+            <button class="btn btn-outline" data-scenario="2">Low Pest (22%)</button>
+            <button class="btn btn-outline active" data-scenario="3">Moderate (45%)</button>
+            <button class="btn btn-outline" data-scenario="4">Severe Pest (68%)</button>
+            <button class="btn btn-outline" data-scenario="5">Outbreak (88%)</button>
+          </div>
+
+          <div class="playback-controls">
+            <button id="btn-play" class="btn btn-primary">▶ Run Season</button>
+            <button id="btn-step" class="btn btn-secondary">⏭ Step Day</button>
+            <button id="btn-reset" class="btn btn-light">⏮ Reset</button>
+            <div class="speed-control">
+              <span>Speed:</span>
+              <input type="range" id="speed-slider" min="100" max="1500" value="400" step="100">
+              <span id="speed-label">0.4s</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: PPO Agent Brain & Real-Time Telemetry -->
+      <section class="card right-panel">
+        <div class="card-header">
+          <h2>🧠 PPO Policy Decision Brain</h2>
+          <span class="phase-badge" id="growth-stage-badge">Vegetative Stage</span>
+        </div>
+
+        <!-- Current Field State Gauges -->
+        <div class="gauges-grid">
+          <div class="gauge-card">
+            <div class="gauge-title">Pest Severity</div>
+            <div class="gauge-value" id="val-pest">45.0%</div>
+            <div class="progress-bar-container">
+              <div id="bar-pest" class="progress-fill fill-danger" style="width: 45%;"></div>
+            </div>
+          </div>
+
+          <div class="gauge-card">
+            <div class="gauge-title">Crop Health</div>
+            <div class="gauge-value" id="val-health">65.0%</div>
+            <div class="progress-bar-container">
+              <div id="bar-health" class="progress-fill fill-success" style="width: 65%;"></div>
+            </div>
+          </div>
+
+          <div class="gauge-card">
+            <div class="gauge-title">Field Weather</div>
+            <div class="gauge-meta" id="val-weather">30.0°C | 70.0% Hum</div>
+            <div class="gauge-sub" id="val-soil">Soil Moisture: 55.0%</div>
+          </div>
+
+          <div class="gauge-card">
+            <div class="gauge-title">Economic Return</div>
+            <div class="gauge-value text-accent" id="val-cum-reward">+0.00</div>
+            <div class="gauge-sub" id="val-step-reward">Step Reward: +0.00</div>
+          </div>
+        </div>
+
+        <!-- RL Policy Trade-Off: Exploration vs. Exploitation -->
+        <div class="rl-tradeoff-card" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 700; font-size: 12px; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
+              <span>⚖️</span> <span>RL Trade-Off: Exploration vs. Exploitation</span>
+            </span>
+            <span id="entropy-badge" style="font-size: 11px; font-family: 'JetBrains Mono', monospace; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.3);">
+              Entropy: 0.28 nats
+            </span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 11px; color: #10b981; font-weight: 600;">Exploit (Optimal)</span>
+            <input type="range" id="exploration-slider" min="0" max="100" value="0" step="5" style="flex: 1; accent-color: #38bdf8; cursor: pointer;">
+            <span style="font-size: 11px; color: #f59e0b; font-weight: 600;">Explore (Stochastic)</span>
+            <span id="exploration-rate-label" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #cbd5e1; min-width: 36px; text-align: right;">0%</span>
+          </div>
+          <div style="font-size: 10.5px; color: #94a3b8; margin-top: 5px; display: flex; justify-content: space-between;">
+            <span id="exploration-mode-desc">Mode: <strong>Pure Exploitation (Optimal Action Selection)</strong></span>
+          </div>
+        </div>
+
+        <!-- PPO Action Probability Distribution -->
+        <div class="action-distribution-card">
+          <div class="sub-header">
+            <h3>Categorical Action Probabilities</h3>
+            <span class="treatment-highlight" id="recommended-treatment-badge">Recommended: --</span>
+          </div>
+
+          <div class="prob-row">
+            <div class="prob-label"><span>0. No Treatment</span> <span class="cost-tag">Cost: $0</span></div>
+            <div class="prob-bar-wrap">
+              <div class="prob-bar prob-0" id="prob-bar-0" style="width: 0%;"></div>
+            </div>
+            <span class="prob-pct" id="prob-val-0">0%</span>
+          </div>
+
+          <div class="prob-row">
+            <div class="prob-label"><span>1. Low Treatment</span> <span class="cost-tag">Cost: $1</span></div>
+            <div class="prob-bar-wrap">
+              <div class="prob-bar prob-1" id="prob-bar-1" style="width: 0%;"></div>
+            </div>
+            <span class="prob-pct" id="prob-val-1">0%</span>
+          </div>
+
+          <div class="prob-row">
+            <div class="prob-label"><span>2. Medium Treatment</span> <span class="cost-tag">Cost: $2</span></div>
+            <div class="prob-bar-wrap">
+              <div class="prob-bar prob-2" id="prob-bar-2" style="width: 0%;"></div>
+            </div>
+            <span class="prob-pct" id="prob-val-2">0%</span>
+          </div>
+
+          <div class="prob-row">
+            <div class="prob-label"><span>3. High Treatment</span> <span class="cost-tag">Cost: $3</span></div>
+            <div class="prob-bar-wrap">
+              <div class="prob-bar prob-3" id="prob-bar-3" style="width: 0%;"></div>
+            </div>
+            <span class="prob-pct" id="prob-val-3">0%</span>
+          </div>
+        </div>
+
+        <!-- Real-Time Dynamic Charts -->
+        <div class="chart-container">
+          <div class="sub-header">
+            <h3>Field Trajectory (25-Day Trend)</h3>
+            <div class="chart-legend">
+              <span class="legend-dot dot-red"></span> Pest %
+              <span class="legend-dot dot-green"></span> Health %
+              <span class="legend-dot dot-blue"></span> Action Taken
+            </div>
+          </div>
+          <canvas id="season-chart" width="550" height="170"></canvas>
+        </div>
+
+        <!-- Decision Log Stream -->
+        <div class="log-container">
+          <div class="log-header">Sequential Decision History</div>
+          <div class="log-stream" id="decision-log"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

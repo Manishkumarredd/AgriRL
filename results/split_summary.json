@@ -1,0 +1,52 @@
+{
+    "per_class": {
+        "aphid": {
+            "total": 1303,
+            "train": 912,
+            "val": 195,
+            "test": 196
+        },
+        "armyworm": {
+            "total": 350,
+            "train": 245,
+            "val": 52,
+            "test": 53
+        },
+        "beetle": {
+            "total": 350,
+            "train": 245,
+            "val": 52,
+            "test": 53
+        },
+        "mite": {
+            "total": 1200,
+            "train": 840,
+            "val": 180,
+            "test": 180
+        },
+        "sawfly": {
+            "total": 350,
+            "train": 245,
+            "val": 52,
+            "test": 53
+        },
+        "stem_borer": {
+            "total": 350,
+            "train": 245,
+            "val": 52,
+            "test": 53
+        },
+        "stem_fly": {
+            "total": 284,
+            "train": 199,
+            "val": 43,
+            "test": 42
+        }
+    },
+    "totals": {
+        "train": 2931,
+        "val": 626,
+        "test": 630,
+        "overall": 4187
+    }
+}
